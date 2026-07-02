@@ -36,7 +36,7 @@ Provides syntax highlighting, bracket matching, and snippets for `.mdma` (Markdo
 ### Development install (no packaging required)
 
 ```bash
-cp -r /path/to/mdma-vscode ~/.vscode/extensions/mdma-language-0.0.1
+cp -r /path/to/mdma-vscode ~/.vscode/extensions/mdma-language-0.1.0
 ```
 
 Then **reload VSCode** (`Ctrl+Shift+P` → `Developer: Reload Window`).
@@ -46,7 +46,7 @@ Then **reload VSCode** (`Ctrl+Shift+P` → `Developer: Reload Window`).
 ```bash
 npm install -g @vscode/vsce
 vsce package
-code --install-extension mdma-language-0.0.1.vsix
+code --install-extension mdma-language-0.1.0.vsix
 ```
 
 ## Theme Compatibility
