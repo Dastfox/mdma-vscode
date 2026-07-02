@@ -1,0 +1,20 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npx --yes @vscode/vsce publish --pat "$VSCE_PAT"
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        # Requires a Personal Access Token from https://dev.azure.com (per VS
+        # Code publishing docs) stored as the VSCE_PAT repo secret:
+        #   gh secret set VSCE_PAT --repo Dastfox/mdma-vscode
