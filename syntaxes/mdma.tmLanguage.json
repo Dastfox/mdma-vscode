@@ -39,7 +39,7 @@
         },
 
         "block-header": {
-            "match": "^(<)([-a-zA-Z0-9]+)(>)\\s*$",
+            "match": "^(<)([-a-zA-Z0-9_]+)(>)\\s*$",
             "captures": {
                 "1": { "name": "punctuation.definition.tag.begin.mdma" },
                 "2": { "name": "entity.name.section.block.mdma" },
@@ -49,7 +49,7 @@
 
         "block-header-open": {
             "name": "meta.tag.block.open.mdma",
-            "begin": "^(<)\\s*([A-Za-z0-9][A-Za-z0-9-]*)?\\s*$",
+            "begin": "^(<)\\s*([A-Za-z0-9][A-Za-z0-9_-]*)?\\s*$",
             "beginCaptures": {
                 "1": { "name": "punctuation.definition.tag.begin.mdma" },
                 "2": { "name": "entity.name.section.block.mdma" }
