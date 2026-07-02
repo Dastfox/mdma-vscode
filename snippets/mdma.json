@@ -1,0 +1,103 @@
+{
+    "MDMA file skeleton": {
+        "prefix": "@inputs",
+        "body": [
+            "@inputs",
+            "${1:name}: string",
+            "",
+            "<${2:block-name}>",
+            "${3:# {{ ${1:name} }}}"
+        ],
+        "description": "New .mdma file with inputs and a block"
+    },
+    "Input declaration": {
+        "prefix": "input",
+        "body": "${1:name}: ${2|string,string[],boolean,number,number[],object,object[]|}${3: = ${4:[]}}",
+        "description": "Typed input declaration"
+    },
+    "Block header": {
+        "prefix": "block",
+        "body": [
+            "<${1:block-name}>",
+            "$0"
+        ],
+        "description": "Named block declaration"
+    },
+    "Multiple block": {
+        "prefix": "multiple",
+        "body": [
+            "<${1:block-name}",
+            "multiple: ${2:item} in ${3:items}",
+            ">",
+            "",
+            "$0"
+        ],
+        "description": "Block with multiple modifier"
+    },
+    "Multiple block with name": {
+        "prefix": "multiplename",
+        "body": [
+            "<${1:block-name}",
+            "multiple: ${2:item} in ${3:items}",
+            "name: ${2:item}.${4:id}",
+            ">",
+            "",
+            "$0"
+        ],
+        "description": "Block with multiple modifier, keyed by a computed name"
+    },
+    "If block": {
+        "prefix": "if",
+        "body": [
+            "{% if ${1:condition} %}",
+            "$0",
+            "{% endif %}"
+        ],
+        "description": "Conditional block"
+    },
+    "If with whitespace control": {
+        "prefix": "ifw",
+        "body": [
+            "{% if ${1:list} | length > 0 -%}",
+            "### ${2:Section}",
+            "{% for ${3:item} in ${1:list} -%}",
+            "- {{ ${3:item} }}",
+            "{% endfor -%}",
+            "{% endif %}"
+        ],
+        "description": "Conditional list section with whitespace control"
+    },
+    "For loop": {
+        "prefix": "for",
+        "body": [
+            "{% for ${1:item} in ${2:list} %}",
+            "{{ ${1:item} }}",
+            "{% endfor %}"
+        ],
+        "description": "For loop"
+    },
+    "For loop with whitespace control": {
+        "prefix": "forw",
+        "body": [
+            "{% for ${1:item} in ${2:list} -%}",
+            "- {{ ${1:item} }}",
+            "{% endfor -%}"
+        ],
+        "description": "For loop with whitespace control"
+    },
+    "Interpolation": {
+        "prefix": "{{",
+        "body": "{{ ${1:variable} }}",
+        "description": "Template interpolation"
+    },
+    "Breaking change notice": {
+        "prefix": "breaking",
+        "body": [
+            "{%- if breaking %}",
+            "",
+            "> **Breaking changes included in this release.**",
+            "{%- endif %}"
+        ],
+        "description": "Breaking change blockquote"
+    }
+}

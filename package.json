@@ -1,0 +1,54 @@
+{
+    "name": "mdma-language",
+    "displayName": "MDMA Language Support",
+    "description": "Syntax highlighting for .mdma (Markdown Mapped) template files",
+    "version": "0.0.1",
+    "publisher": "theorenard",
+    "author": "Théo Renard",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Dastfox/mdma-vscode.git"
+    },
+    "bugs": "https://github.com/Dastfox/mdma-vscode/issues",
+    "homepage": "https://dastfox.github.io/mdma/",
+    "icon": "./icons/icon.svg",
+    "engines": {
+        "vscode": "^1.74.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "mdma",
+                "aliases": [
+                    "Markdown Mapped",
+                    "mdma"
+                ],
+                "extensions": [
+                    ".mdma"
+                ],
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "./icons/mdma-file-light.svg",
+                    "dark": "./icons/mdma-file-dark.svg"
+                }
+            }
+        ],
+        "grammars": [
+            {
+                "language": "mdma",
+                "scopeName": "source.mdma",
+                "path": "./syntaxes/mdma.tmLanguage.json"
+            }
+        ],
+        "snippets": [
+            {
+                "language": "mdma",
+                "path": "./snippets/mdma.json"
+            }
+        ]
+    }
+}

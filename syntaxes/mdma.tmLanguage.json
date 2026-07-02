@@ -1,0 +1,256 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "Markdown Mapped",
+    "scopeName": "source.mdma",
+    "fileTypes": ["mdma"],
+    "patterns": [
+        { "include": "#inputs-keyword" },
+        { "include": "#block-header-open" },
+        { "include": "#block-header" },
+        { "include": "#input-declaration" },
+        { "include": "#template-interpolation" },
+        { "include": "#template-tag" },
+        { "include": "#markdown-fenced-code" },
+        { "include": "#markdown-heading" },
+        { "include": "#markdown-blockquote" },
+        { "include": "#markdown-list-item" },
+        { "include": "#markdown-bold" },
+        { "include": "#markdown-italic" },
+        { "include": "#markdown-code-inline" }
+    ],
+    "repository": {
+        "inputs-keyword": {
+            "match": "^(@)(inputs)\\s*$",
+            "captures": {
+                "1": { "name": "punctuation.definition.keyword.mdma" },
+                "2": { "name": "keyword.control.inputs.mdma" }
+            }
+        },
+
+        "input-declaration": {
+            "match": "^([a-zA-Z_][a-zA-Z0-9_]*)\\s*(:)\\s*(string(?:\\[\\])?|boolean|number(?:\\[\\])?|object(?:\\[\\])?)(?:\\s*(=)\\s*(.+?))?\\s*$",
+            "captures": {
+                "1": { "name": "variable.parameter.input.mdma" },
+                "2": { "name": "punctuation.separator.key-value.mdma" },
+                "3": { "name": "support.type.primitive.mdma" },
+                "4": { "name": "keyword.operator.assignment.mdma" },
+                "5": { "name": "constant.other.default-value.mdma" }
+            }
+        },
+
+        "block-header": {
+            "match": "^(<)([-a-zA-Z0-9]+)(>)\\s*$",
+            "captures": {
+                "1": { "name": "punctuation.definition.tag.begin.mdma" },
+                "2": { "name": "entity.name.section.block.mdma" },
+                "3": { "name": "punctuation.definition.tag.end.mdma" }
+            }
+        },
+
+        "block-header-open": {
+            "name": "meta.tag.block.open.mdma",
+            "begin": "^(<)\\s*([A-Za-z0-9][A-Za-z0-9-]*)?\\s*$",
+            "beginCaptures": {
+                "1": { "name": "punctuation.definition.tag.begin.mdma" },
+                "2": { "name": "entity.name.section.block.mdma" }
+            },
+            "end": "^(>)\\s*$",
+            "endCaptures": {
+                "1": { "name": "punctuation.definition.tag.end.mdma" }
+            },
+            "patterns": [
+                { "include": "#block-name-line" },
+                { "include": "#multiple-modifier-line" },
+                { "include": "#name-modifier-line" }
+            ]
+        },
+
+        "block-name-line": {
+            "match": "^([A-Za-z0-9][A-Za-z0-9-]*)\\s*$",
+            "captures": {
+                "1": { "name": "entity.name.section.block.mdma" }
+            }
+        },
+
+        "multiple-modifier-line": {
+            "match": "^(multiple)\\s*(:)\\s*([a-zA-Z_][a-zA-Z0-9_]*)\\s+(in)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*$",
+            "captures": {
+                "1": { "name": "keyword.control.multiple.mdma" },
+                "2": { "name": "punctuation.separator.key-value.mdma" },
+                "3": { "name": "variable.parameter.iterator.mdma" },
+                "4": { "name": "keyword.operator.word.in.mdma" },
+                "5": { "name": "variable.name.collection.mdma" }
+            }
+        },
+
+        "name-modifier-line": {
+            "match": "^(name)\\s*(:)\\s*(.+?)\\s*$",
+            "captures": {
+                "1": { "name": "keyword.control.name.mdma" },
+                "2": { "name": "punctuation.separator.key-value.mdma" },
+                "3": {
+                    "patterns": [{ "include": "#template-expression" }]
+                }
+            }
+        },
+
+        "template-interpolation": {
+            "name": "meta.interpolation.mdma",
+            "begin": "(\\{\\{-?)",
+            "end": "(-?\\}\\})",
+            "beginCaptures": {
+                "1": { "name": "punctuation.definition.template.expression.begin.mdma" }
+            },
+            "endCaptures": {
+                "1": { "name": "punctuation.definition.template.expression.end.mdma" }
+            },
+            "patterns": [
+                { "include": "#template-expression" }
+            ]
+        },
+
+        "template-tag": {
+            "name": "meta.tag.template.mdma",
+            "begin": "(\\{%-?)",
+            "end": "(-?%\\})",
+            "beginCaptures": {
+                "1": { "name": "punctuation.definition.tag.template.begin.mdma" }
+            },
+            "endCaptures": {
+                "1": { "name": "punctuation.definition.tag.template.end.mdma" }
+            },
+            "patterns": [
+                { "include": "#template-control-keywords" },
+                { "include": "#template-expression" }
+            ]
+        },
+
+        "template-control-keywords": {
+            "patterns": [
+                {
+                    "match": "\\b(if|elif|else|endif|for|endfor)\\b",
+                    "name": "keyword.control.flow.mdma"
+                },
+                {
+                    "match": "\\b(in|not|and|or)\\b",
+                    "name": "keyword.operator.logical.mdma"
+                }
+            ]
+        },
+
+        "template-expression": {
+            "patterns": [
+                {
+                    "match": "\\|",
+                    "name": "keyword.operator.pipe.mdma"
+                },
+                {
+                    "match": "\\b(length|lower|upper|trim|join|first|last|default|reverse|sort|unique)\\b",
+                    "name": "support.function.builtin.filter.mdma"
+                },
+                {
+                    "match": "\\b(true|false|null|none)\\b",
+                    "name": "constant.language.mdma"
+                },
+                {
+                    "match": "-?[0-9]+(?:\\.[0-9]+)?",
+                    "name": "constant.numeric.mdma"
+                },
+                {
+                    "match": "==|!=|>=|<=|>|<",
+                    "name": "keyword.operator.comparison.mdma"
+                },
+                {
+                    "name": "string.quoted.double.template.mdma",
+                    "begin": "\"",
+                    "end": "\"",
+                    "patterns": [
+                        {
+                            "match": "\\\\.",
+                            "name": "constant.character.escape.mdma"
+                        }
+                    ]
+                },
+                {
+                    "name": "string.quoted.single.template.mdma",
+                    "begin": "'",
+                    "end": "'",
+                    "patterns": [
+                        {
+                            "match": "\\\\.",
+                            "name": "constant.character.escape.mdma"
+                        }
+                    ]
+                },
+                {
+                    "match": "[a-zA-Z_][a-zA-Z0-9_.]*",
+                    "name": "variable.other.template.mdma"
+                }
+            ]
+        },
+
+        "markdown-fenced-code": {
+            "name": "markup.raw.block.mdma",
+            "begin": "^(```+)([a-zA-Z0-9]*)\\s*$",
+            "end": "^(```+)\\s*$",
+            "beginCaptures": {
+                "1": { "name": "punctuation.definition.raw.markdown.mdma" },
+                "2": { "name": "fenced_code.block.language.mdma" }
+            },
+            "endCaptures": {
+                "1": { "name": "punctuation.definition.raw.markdown.mdma" }
+            },
+            "contentName": "meta.embedded.block.mdma"
+        },
+
+        "markdown-heading": {
+            "match": "^(#{1,6})\\s+(.+)$",
+            "captures": {
+                "1": { "name": "punctuation.definition.heading.markdown.mdma" },
+                "2": { "name": "markup.heading.markdown.mdma" }
+            }
+        },
+
+        "markdown-blockquote": {
+            "match": "^(>)\\s",
+            "captures": {
+                "1": { "name": "punctuation.definition.quote.markdown.mdma" }
+            },
+            "name": "markup.quote.markdown.mdma"
+        },
+
+        "markdown-list-item": {
+            "match": "^([-*+])\\s",
+            "captures": {
+                "1": { "name": "punctuation.definition.list.markdown.mdma" }
+            }
+        },
+
+        "markdown-bold": {
+            "match": "(\\*\\*|__)(.+?)(\\*\\*|__)",
+            "captures": {
+                "1": { "name": "punctuation.definition.bold.markdown.mdma" },
+                "2": { "name": "markup.bold.markdown.mdma" },
+                "3": { "name": "punctuation.definition.bold.markdown.mdma" }
+            }
+        },
+
+        "markdown-italic": {
+            "match": "(\\*|_)(?!\\s)(.+?)(?<!\\s)(\\*|_)",
+            "captures": {
+                "1": { "name": "punctuation.definition.italic.markdown.mdma" },
+                "2": { "name": "markup.italic.markdown.mdma" },
+                "3": { "name": "punctuation.definition.italic.markdown.mdma" }
+            }
+        },
+
+        "markdown-code-inline": {
+            "match": "(`+)([^`]+)(\\1)",
+            "captures": {
+                "1": { "name": "punctuation.definition.raw.markdown.mdma" },
+                "2": { "name": "markup.inline.raw.markdown.mdma" },
+                "3": { "name": "punctuation.definition.raw.markdown.mdma" }
+            }
+        }
+    }
+}
