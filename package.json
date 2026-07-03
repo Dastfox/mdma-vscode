@@ -1,8 +1,8 @@
 {
     "name": "mdma-language",
     "displayName": "MDMA — Markdown Mapped",
-    "description": "Syntax highlighting for .mdma (Markdown Mapped) template files",
-    "version": "0.1.1",
+    "description": "Syntax highlighting, linting, and formatting for .mdma (Markdown Mapped) template files",
+    "version": "0.2.0",
     "publisher": "dast-fox",
     "author": "Théo Renard",
     "license": "MIT",
@@ -17,8 +17,27 @@
         "vscode": "^1.74.0"
     },
     "categories": [
-        "Programming Languages"
+        "Programming Languages",
+        "Linters",
+        "Formatters"
     ],
+    "main": "./dist/extension.js",
+    "scripts": {
+        "compile": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node16",
+        "watch": "npm run compile -- --watch",
+        "typecheck": "tsc --noEmit",
+        "vscode:prepublish": "npm run compile"
+    },
+    "dependencies": {
+        "markdownlint": "^0.41.0",
+        "typescript-mdma": "^0.2.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "@types/vscode": "^1.74.0",
+        "esbuild": "^0.28.1",
+        "typescript": "^5.5.0"
+    },
     "contributes": {
         "languages": [
             {

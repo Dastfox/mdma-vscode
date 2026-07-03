@@ -1,2 +1,6 @@
 .gitignore
 .github/**
+src/**
+node_modules/**
+tsconfig.json
+*.map
