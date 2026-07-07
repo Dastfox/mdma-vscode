@@ -58,7 +58,7 @@
             "match": "^(<)([-a-zA-Z0-9_]+)(>)\\s*$",
             "captures": {
                 "1": { "name": "punctuation.definition.tag.begin.mdma" },
-                "2": { "name": "entity.name.tag.block.mdma" },
+                "2": { "name": "entity.name.tag.block.mdma markup.bold.mdma" },
                 "3": { "name": "punctuation.definition.tag.end.mdma" }
             }
         },
@@ -68,7 +68,7 @@
             "begin": "^(<)\\s*([A-Za-z0-9][A-Za-z0-9_-]*)?\\s*$",
             "beginCaptures": {
                 "1": { "name": "punctuation.definition.tag.begin.mdma" },
-                "2": { "name": "entity.name.tag.block.mdma" }
+                "2": { "name": "entity.name.tag.block.mdma markup.bold.mdma" }
             },
             "end": "^(>)\\s*$",
             "endCaptures": {
@@ -84,7 +84,7 @@
         "block-name-line": {
             "match": "^([A-Za-z0-9][A-Za-z0-9-]*)\\s*$",
             "captures": {
-                "1": { "name": "entity.name.tag.block.mdma" }
+                "1": { "name": "entity.name.tag.block.mdma markup.bold.mdma" }
             }
         },
 
