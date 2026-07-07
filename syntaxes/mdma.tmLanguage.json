@@ -4,6 +4,7 @@
     "scopeName": "source.mdma",
     "fileTypes": ["mdma"],
     "patterns": [
+        { "include": "#comment-block" },
         { "include": "#inputs-keyword" },
         { "include": "#block-header-open" },
         { "include": "#block-header" },
@@ -19,6 +20,18 @@
         { "include": "#markdown-code-inline" }
     ],
     "repository": {
+        "comment-block": {
+            "name": "comment.block.mdma",
+            "begin": "\\{#-?",
+            "end": "-?#\\}",
+            "beginCaptures": {
+                "0": { "name": "punctuation.definition.comment.begin.mdma" }
+            },
+            "endCaptures": {
+                "0": { "name": "punctuation.definition.comment.end.mdma" }
+            }
+        },
+
         "inputs-keyword": {
             "match": "^(@)(inputs)\\s*$",
             "captures": {
@@ -28,13 +41,16 @@
         },
 
         "input-declaration": {
-            "match": "^([a-zA-Z_][a-zA-Z0-9_]*)\\s*(:)\\s*(string(?:\\[\\])?|boolean|number(?:\\[\\])?|object(?:\\[\\])?)(?:\\s*(=)\\s*(.+?))?\\s*$",
+            "match": "^([a-zA-Z_][a-zA-Z0-9_]*)\\s*(:)\\s*(string(?:\\[\\])?|boolean|number(?:\\[\\])?|object(?:\\[\\])?)(?:\\s*(=)\\s*(.+?))?\\s*(\\{#.*#\\}[ \\t]*)?$",
             "captures": {
                 "1": { "name": "variable.parameter.input.mdma" },
                 "2": { "name": "punctuation.separator.key-value.mdma" },
                 "3": { "name": "support.type.primitive.mdma" },
                 "4": { "name": "keyword.operator.assignment.mdma" },
-                "5": { "name": "constant.other.default-value.mdma" }
+                "5": { "name": "constant.other.default-value.mdma" },
+                "6": {
+                    "patterns": [{ "include": "#comment-block" }]
+                }
             }
         },
 
@@ -42,7 +58,7 @@
             "match": "^(<)([-a-zA-Z0-9_]+)(>)\\s*$",
             "captures": {
                 "1": { "name": "punctuation.definition.tag.begin.mdma" },
-                "2": { "name": "entity.name.section.block.mdma" },
+                "2": { "name": "entity.name.tag.block.mdma" },
                 "3": { "name": "punctuation.definition.tag.end.mdma" }
             }
         },
@@ -52,7 +68,7 @@
             "begin": "^(<)\\s*([A-Za-z0-9][A-Za-z0-9_-]*)?\\s*$",
             "beginCaptures": {
                 "1": { "name": "punctuation.definition.tag.begin.mdma" },
-                "2": { "name": "entity.name.section.block.mdma" }
+                "2": { "name": "entity.name.tag.block.mdma" }
             },
             "end": "^(>)\\s*$",
             "endCaptures": {
@@ -68,7 +84,7 @@
         "block-name-line": {
             "match": "^([A-Za-z0-9][A-Za-z0-9-]*)\\s*$",
             "captures": {
-                "1": { "name": "entity.name.section.block.mdma" }
+                "1": { "name": "entity.name.tag.block.mdma" }
             }
         },
 

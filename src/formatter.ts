@@ -19,12 +19,22 @@ const BARE_NAME_LINE_RE = /^([A-Za-z0-9][A-Za-z0-9-]*)$/;
 const CLOSE_HEADER_RE = /^>\s*$/;
 const MULTIPLE_MOD_RE = /^multiple\s*:\s*([A-Za-z_][A-Za-z0-9_]*)\s+in\s+([A-Za-z_][A-Za-z0-9_]*)$/;
 const NAME_MOD_RE = /^name\s*:\s*(.+)$/;
+// One or more {# ... #} comments at the end of a structural line. The
+// non-greedy body plus the trailing anchor means a comment-looking span
+// inside a quoted default value never matches.
+const TRAILING_COMMENT_RE = /[ \t]*(?:\{#.*?#\}[ \t]*)+$/;
+const COMMENT_LINE_RE = /^[ \t]*(?:\{#.*?#\}[ \t]*)+$/;
+
+function isCommentLine(strippedLine: string): boolean {
+  return strippedLine.startsWith("{#") && COMMENT_LINE_RE.test(strippedLine);
+}
 
 interface InputDeclMatch {
   index: number;
   name: string;
   type: string;
   defaultRaw: string | undefined;
+  comment: string | undefined;
 }
 
 /** Formats the @inputs section in place, aligning ':' and '=' columns. Returns the index of the first line after the section, or null if the file doesn't start with a recognizable @inputs section. */
@@ -37,9 +47,17 @@ function formatInputsSection(lines: string[], output: string[]): number | null {
   while (idx < lines.length) {
     const stripped = lines[idx].trim();
     if (stripped === "" || SIMPLE_HEADER_RE.test(stripped) || OPEN_HEADER_RE.test(stripped)) break;
-    const m = INPUT_DECL_RE.exec(stripped);
+    if (isCommentLine(stripped)) {
+      output[idx] = stripped;
+      idx += 1;
+      continue;
+    }
+    const commentMatch = TRAILING_COMMENT_RE.exec(stripped);
+    const comment = commentMatch ? commentMatch[0].trim() : undefined;
+    const declText = comment === undefined ? stripped : stripped.replace(TRAILING_COMMENT_RE, "");
+    const m = INPUT_DECL_RE.exec(declText);
     if (!m) return null; // malformed declaration -- bail out, let the linter flag it
-    decls.push({ index: idx, name: m[1], type: m[2], defaultRaw: m[3] });
+    decls.push({ index: idx, name: m[1], type: m[2], defaultRaw: m[3], comment });
     idx += 1;
   }
 
@@ -51,10 +69,11 @@ function formatInputsSection(lines: string[], output: string[]): number | null {
 
   for (const d of decls) {
     const head = `${d.name}:`.padEnd(nameColWidth);
-    output[d.index] =
+    const decl =
       d.defaultRaw === undefined
         ? `${head} ${d.type}`
         : `${head} ${d.type.padEnd(typeColWidth)} = ${d.defaultRaw.trim()}`;
+    output[d.index] = d.comment === undefined ? decl : `${decl}  ${d.comment}`;
   }
 
   return idx;

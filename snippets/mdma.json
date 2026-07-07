@@ -90,6 +90,11 @@
         "body": "{{ ${1:variable} }}",
         "description": "Template interpolation"
     },
+    "Comment": {
+        "prefix": "{#",
+        "body": "{# ${1:note} #}",
+        "description": "Comment (stripped from rendered output)"
+    },
     "Breaking change notice": {
         "prefix": "breaking",
         "body": [

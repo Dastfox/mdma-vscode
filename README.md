@@ -8,12 +8,12 @@ Provides syntax highlighting, bracket matching, and snippets for `.mdma` (Markdo
   - `@inputs` section and typed declarations
   - Block headers `<blockname>`
   - Multi-line block headers with `multiple: x in list` / `name: expr` modifiers
-  - Template interpolation `{{ }}` and control tags `{% %}`
+  - Template interpolation `{{ }}`, control tags `{% %}`, and comments `{# #}`
   - Template keywords (`if`, `for`, `elif`, `else`, `endif`, `endfor`, `in`, `not`, `and`, `or`)
   - Filter functions (`length`, `join`, `lower`, etc.)
   - Markdown content within blocks (headings, bold, italic, blockquotes, code)
 
-- **Bracket auto-closing** for `{{ }}` and `{% %}` pairs
+- **Bracket auto-closing** for `{{ }}`, `{% %}`, and `{# #}` pairs, plus comment toggling (`Ctrl+/`) using `{# ... #}`
 
 - **Snippets** — trigger with the prefix in any `.mdma` file:
 
@@ -29,6 +29,7 @@ Provides syntax highlighting, bracket matching, and snippets for `.mdma` (Markdo
   | `for` | For loop |
   | `forw` | For loop with whitespace stripping |
   | `{{` | Interpolation tag |
+  | `{#` | Comment |
   | `breaking` | Breaking change blockquote |
 
 ## Installation

@@ -37,6 +37,12 @@ const OPEN_HEADER_RE = /^<\s*([A-Za-z0-9][A-Za-z0-9-]*)?\s*$/;
 const CLOSE_HEADER_RE = /^>\s*$/;
 const CONTROL_TAG_LINE_RE =
   /^\{%-?\s*(if\s+[\s\S]+|elif\s+[\s\S]+|else|endif|for\s+[A-Za-z_][A-Za-z0-9_]*\s+in\s+[\s\S]+|endfor)\s*-?%\}$/;
+const TRAILING_COMMENT_RE = /[ \t]*(?:\{#.*?#\}[ \t]*)+$/;
+const COMMENT_LINE_RE = /^[ \t]*(?:\{#.*?#\}[ \t]*)+$/;
+
+function isCommentLine(strippedLine: string): boolean {
+  return strippedLine.startsWith("{#") && COMMENT_LINE_RE.test(strippedLine);
+}
 
 interface LineRange {
   start: number; // inclusive, 0-based
@@ -52,7 +58,7 @@ function findBlockBodies(lines: string[]): LineRange[] {
     while (idx < lines.length) {
       const stripped = lines[idx].trim();
       if (stripped === "" || SIMPLE_HEADER_RE.test(stripped) || OPEN_HEADER_RE.test(stripped)) break;
-      if (!INPUT_DECL_RE.test(stripped)) break;
+      if (!isCommentLine(stripped) && !INPUT_DECL_RE.test(stripped.replace(TRAILING_COMMENT_RE, ""))) break;
       idx += 1;
     }
   }
@@ -94,7 +100,12 @@ function findBlockBodies(lines: string[]): LineRange[] {
 
 function blankControlLines(bodyLines: string[]): string {
   return bodyLines
-    .map((line) => (CONTROL_TAG_LINE_RE.test(line.trim()) ? CONTROL_LINE_PLACEHOLDER : line))
+    .map((line) => {
+      const stripped = line.trim();
+      return CONTROL_TAG_LINE_RE.test(stripped) || isCommentLine(stripped)
+        ? CONTROL_LINE_PLACEHOLDER
+        : line;
+    })
     .join("\n");
 }
 
