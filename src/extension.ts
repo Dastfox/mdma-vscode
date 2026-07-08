@@ -1,8 +1,12 @@
 import * as vscode from "vscode";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { lint as lintMarkdown } from "markdownlint/sync";
 import type { LintError } from "markdownlint";
-import { MdmaSyntaxError, parseFile } from "typescript-mdma";
+import { dtsPathFor, generateDts, MdmaSyntaxError, parseFile } from "typescript-mdma";
 import { formatMdma } from "./formatter.js";
+
+const TYPES_DIR_NAME = ".mdma-types";
 
 const LANGUAGE_ID = "mdma";
 const DIAGNOSTIC_SOURCE = "mdma";
@@ -160,6 +164,60 @@ function lintDocument(doc: vscode.TextDocument): vscode.Diagnostic[] {
   return [...syntaxDiagnostics(doc), ...markdownDiagnostics(doc)];
 }
 
+/**
+ * Walks up from `fsPath`'s directory for the nearest `tsconfig.json`,
+ * bounded by `workspaceRoot` (or the filesystem root if the file sits
+ * outside any workspace folder). Its directory is treated as the TS
+ * project root that owns the file's declarations.
+ */
+function findTsProjectRoot(fsPath: string, workspaceRoot: string | undefined): string | null {
+  let dir = dirname(fsPath);
+  while (true) {
+    if (existsSync(join(dir, "tsconfig.json"))) return dir;
+    if (workspaceRoot !== undefined && dir === workspaceRoot) return null;
+    const parent = dirname(dir);
+    if (parent === dir) return null;
+    dir = parent;
+  }
+}
+
+/**
+ * Keeps `.mdma-types/foo.d.mdma.ts` in sync with `foo.mdma` on save, mirrored
+ * under the nearest TS project root (the closest ancestor `tsconfig.json`)
+ * at the same path relative to that root. Mirrors the mdma-typegen CLI's
+ * `--out-dir` behavior, pairing with a `rootDirs` entry in that tsconfig so
+ * `allowArbitraryExtensions` still resolves the import. Files outside any
+ * TS project are skipped entirely -- declarations are a TS-only concern, and
+ * this repo in particular shares `.mdma` templates with the Python and Go
+ * implementations, which must not get an npm-flavored file dropped on them.
+ * A parse error is left for the existing lint diagnostics to report, rather
+ * than surfaced again here.
+ */
+function generateDtsOnSave(doc: vscode.TextDocument): void {
+  if (doc.languageId !== LANGUAGE_ID) return;
+
+  const workspaceRoot = vscode.workspace.getWorkspaceFolder(doc.uri)?.uri.fsPath;
+  const projectRoot = findTsProjectRoot(doc.uri.fsPath, workspaceRoot);
+  if (projectRoot === null) return;
+
+  let dts: string;
+  try {
+    dts = generateDts(doc.getText());
+  } catch (err) {
+    if (err instanceof MdmaSyntaxError) return;
+    throw err;
+  }
+
+  const dtsPath = dtsPathFor(doc.uri.fsPath, { outDir: join(projectRoot, TYPES_DIR_NAME), sourceRoot: projectRoot });
+  try {
+    if (readFileSync(dtsPath, "utf-8") === dts) return;
+  } catch {
+    // Missing declaration file: write it below.
+  }
+  mkdirSync(dirname(dtsPath), { recursive: true });
+  writeFileSync(dtsPath, dts, "utf-8");
+}
+
 export function activate(context: vscode.ExtensionContext): void {
   const diagnostics = vscode.languages.createDiagnosticCollection(DIAGNOSTIC_SOURCE);
   context.subscriptions.push(diagnostics);
@@ -198,7 +256,10 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument(lintNow),
     vscode.workspace.onDidChangeTextDocument((e) => lintDebounced(e.document)),
-    vscode.workspace.onDidSaveTextDocument(lintNow),
+    vscode.workspace.onDidSaveTextDocument((doc) => {
+      lintNow(doc);
+      generateDtsOnSave(doc);
+    }),
     vscode.workspace.onDidCloseTextDocument((doc) => {
       diagnostics.delete(doc.uri);
       const key = doc.uri.toString();

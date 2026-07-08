@@ -15,6 +15,8 @@ Provides syntax highlighting, bracket matching, and snippets for `.mdma` (Markdo
 
 - **Bracket auto-closing** for `{{ }}`, `{% %}`, and `{# #}` pairs, plus comment toggling (`Ctrl+/`) using `{# ... #}`
 
+- **Type declaration generation on save** — for a template in a TypeScript project (one with an ancestor `tsconfig.json`), writes/refreshes its `foo.d.mdma.ts` under a `.mdma-types/` folder at that project's root, mirroring the template's relative path, so `import` types stay in sync without running `mdma-typegen` by hand. Pair it with a `rootDirs` entry in that `tsconfig.json` (see the [typescript-mdma docs](https://www.npmjs.com/package/typescript-mdma)) so `import x from "./foo.mdma"` resolves the generated types, and gitignore `.mdma-types/` since it's regenerated on every save. Templates outside any TypeScript project are left untouched.
+
 - **Snippets** — trigger with the prefix in any `.mdma` file:
 
   | Prefix | Description |
