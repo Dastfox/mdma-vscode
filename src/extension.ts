@@ -67,6 +67,11 @@ function findBlockBodies(lines: string[]): LineRange[] {
     }
   }
 
+  // Blank/comment lines between @inputs and the first header (e.g. a "blocks
+  // below" separator comment) aren't a header themselves; skip them so the
+  // loop below doesn't mistake the rest of the file for one malformed body.
+  while (idx < lines.length && (lines[idx].trim() === "" || isCommentLine(lines[idx].trim()))) idx += 1;
+
   const bodies: LineRange[] = [];
   while (idx < lines.length) {
     const stripped = lines[idx].trim();
