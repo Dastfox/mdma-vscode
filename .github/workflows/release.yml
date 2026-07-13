@@ -19,3 +19,10 @@ jobs:
         # Requires a Personal Access Token from https://dev.azure.com (per VS
         # Code publishing docs) stored as the VSCE_PAT repo secret:
         #   gh secret set VSCE_PAT --repo Dastfox/mdma-vscode
+      - run: npx --yes @vscode/vsce package
+      - run: npx --yes ovsx publish *.vsix --pat "$OVSX_PAT"
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        # Cursor uses the Open VSX registry. Requires a token from
+        # https://open-vsx.org stored as the OVSX_PAT repo secret:
+        #   gh secret set OVSX_PAT --repo Dastfox/mdma-vscode
