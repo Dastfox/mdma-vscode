@@ -2,7 +2,7 @@
     "name": "mdma-language",
     "displayName": "MDMA — Markdown Mapped",
     "description": "Syntax highlighting, linting, formatting, and type declaration generation for .mdma (Markdown Mapped) template files",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "publisher": "dast-fox",
     "author": "Théo Renard",
     "license": "MIT",
